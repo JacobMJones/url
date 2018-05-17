@@ -30,35 +30,42 @@ app.get("/registration", (req, res) => {
 app.post("/registration", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  let id = generateRandomString();
+  let user_id = generateRandomString();
   let username = req.body.username;
-  //console.log(`${email} ${password} ${id}`);
 
-  let user = {
-    id: id,
-    email: email,
-    password: password
+  var emailInDatabase = containsEmail(email);
+
+  if (email === "" || password === "" || username === "" || emailInDatabase) {
+    res.status(400);
+    res.send('None shall pass');
+  } else {
+    let user = {
+      user_id: user_id,
+      email: email,
+      password: password
+    }
+
+    users[username] = user;
+    // console.log(users);
+    res.cookie(username, user_id);
+    res.redirect("/urls");
+
   }
 
-  users[username] = user;
-  console.log(users);
-  res.cookie(username, id);
-  res.redirect("/urls");
 });
-
 
 //EDIT url
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const url = urlDatabase[id];
-  console.log('in edit', id, url);
+
 
   if (url) {
-    console.log('in change url');
+
     urlDatabase[id] = req.body.longURL;
     res.redirect("/urls")
   } else {
-    console.log('NOT in change url');
+
     res.redirect("/urls")
   }
 });
@@ -66,7 +73,7 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   var userName = req.body.username;
 
-  res.cookie("username", userName);
+  //res.cookie("username", userName);
   res.redirect("/urls");
 
 
@@ -84,7 +91,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
+
   let randomId = generateRandomString();
   let htmlAddress = req.body.longURL;
 
@@ -137,7 +144,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let username = req.body.username;
+  //let username = req.body.username;
 
   res.cookie("username", username);
   res.redirect("/urls");
@@ -150,6 +157,20 @@ app.listen(PORT, () => {
 
 
 
+function containsEmail(email) {
+
+
+  for (var user in users) {
+
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
+console.log("contains email bool", containsEmail);
+
 function generateRandomString() {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -157,23 +178,23 @@ function generateRandomString() {
   for (var i = 0; i < 6; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-  console.log(text);
+
   return text;
 };
 
 const users = {
   "Pickle": {
-    id: "mrpickl23",
+    user_id: "mrpickl23",
     email: "mrpick123@gmail.com",
     password: "purple-monkey-dinosaur"
   },
   "Rose Vandermuskin": {
-    id: "arosebyanyothername",
+    user_id: "arosebyanyothername",
     email: "rose.Vandermuskin@hotmail.com",
     password: "dishwasher-funk"
   },
   "Tanger Erotts": {
-    id: "overunder",
+    user_id: "overunder",
     email: "overunder@yahoo.com",
     password: "tangertanger"
   }
