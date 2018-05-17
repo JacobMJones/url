@@ -31,27 +31,26 @@ app.post("/registration", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let user_id = generateRandomString();
-  let username = req.body.username;
+  // let username = req.body.username;
 
   var emailInDatabase = containsEmail(email);
 
-  if (email === "" || password === "" || username === "" || emailInDatabase) {
+  if (email === "" || password === "" || emailInDatabase) {
     res.status(400);
     res.send('None shall pass');
   } else {
     let user = {
       user_id: user_id,
       email: email,
-      password: password
+      password: password,
     }
 
-    users[username] = user;
-    // console.log(users);
-    res.cookie(username, user_id);
-    res.redirect("/urls");
+
+    res.cookie('user_id', user_id);
+    users[user_id] = user;
 
   }
-
+  res.redirect("/urls");
 });
 
 //EDIT url
@@ -71,12 +70,32 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  var userName = req.body.username;
+  let email = req.body.email;
+  let password = req.body.password;
 
-  //res.cookie("username", userName);
-  res.redirect("/urls");
+  if (email === "" || password === "") {
+    res.status(400);
+    res.send('email or password string empty');
+  }
 
+  console.log(users);
+  console.log(containsEmail(email));
 
+  if (containsEmail(email)) {
+    for (var userKey in users) {
+      if (users[userKey].email === email) {
+        if (users[userKey].password === password) {      
+          res.cookie('user_id', users[userKey].user_id);
+          res.redirect("/urls");
+        } else {
+          res.send(403, "stop hacking son!")
+        }
+      }
+    }
+  } else {
+    res.status(400);
+    res.send('email or password not listed, maybe register?');
+  }
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -85,7 +104,6 @@ app.post("/urls/:id/delete", (req, res) => {
 
   if (urlToDelete) {
     delete urlDatabase[idToDelete];
-
   }
   res.redirect("/urls");
 });
@@ -99,11 +117,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`urls/${randomId}`);
 });
 
-
-//delete Employee.firstname;
-
-
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -114,14 +127,20 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
 app.get("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect('/urls');
 });
 app.get("/urls", (req, res) => {
+
+  console.log(req.cookies["user_id"]);
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    userObject: users[req.cookies["user_id"]],
   }
   res.render("urls_index", templateVars);
 });
@@ -131,10 +150,9 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    user_id: req.cookies["user_id"]
   };
-  //shortUrl is the variable name the ejs page will use
-  //req.params.id is the value of the shortUrl variable/key
+
   res.render("urls_show", templateVars);
 });
 
@@ -143,23 +161,11 @@ app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.post("/login", (req, res) => {
-  //let username = req.body.username;
-
-  res.cookie("username", username);
-  res.redirect("/urls");
-
-});
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
-
 function containsEmail(email) {
-
-
   for (var user in users) {
 
     if (users[user].email === email) {
@@ -168,8 +174,6 @@ function containsEmail(email) {
   }
   return false;
 }
-
-console.log("contains email bool", containsEmail);
 
 function generateRandomString() {
   var text = "";
@@ -183,17 +187,17 @@ function generateRandomString() {
 };
 
 const users = {
-  "Pickle": {
+  "mrpickl23": {
     user_id: "mrpickl23",
     email: "mrpick123@gmail.com",
     password: "purple-monkey-dinosaur"
   },
-  "Rose Vandermuskin": {
+  "arosebyanyothername": {
     user_id: "arosebyanyothername",
     email: "rose.Vandermuskin@hotmail.com",
     password: "dishwasher-funk"
   },
-  "Tanger Erotts": {
+  "overunder": {
     user_id: "overunder",
     email: "overunder@yahoo.com",
     password: "tangertanger"
