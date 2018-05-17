@@ -9,16 +9,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.set("view engine", "ejs");
 
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "1s32xK": "http://www.yahoo.com"
-};
+
 
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
 
+app.get("/home", (req, res) => {
+  res.render("home");
+});
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -31,7 +30,6 @@ app.post("/registration", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let user_id = generateRandomString();
-  // let username = req.body.username;
 
   var emailInDatabase = containsEmail(email);
 
@@ -44,8 +42,6 @@ app.post("/registration", (req, res) => {
       email: email,
       password: password,
     }
-
-
     res.cookie('user_id', user_id);
     users[user_id] = user;
 
@@ -80,11 +76,11 @@ app.post("/login", (req, res) => {
 
   console.log(users);
   console.log(containsEmail(email));
-
+  //one function to check both parameters
   if (containsEmail(email)) {
     for (var userKey in users) {
       if (users[userKey].email === email) {
-        if (users[userKey].password === password) {      
+        if (users[userKey].password === password) {
           res.cookie('user_id', users[userKey].user_id);
           res.redirect("/urls");
         } else {
@@ -110,11 +106,12 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls", (req, res) => {
 
+
   let randomId = generateRandomString();
   let htmlAddress = req.body.longURL;
-
   urlDatabase[randomId] = htmlAddress;
   res.redirect(`urls/${randomId}`);
+
 });
 
 app.get("/urls.json", (req, res) => {
@@ -137,10 +134,20 @@ app.get("/logout", (req, res) => {
 });
 app.get("/urls", (req, res) => {
 
-  console.log(req.cookies["user_id"]);
+  if (!users[req.cookies.user_id]) {
+    res.redirect('/home')
+
+  }
+
+  //BUILD POSSIBLE URLS OBJECT FIRST!!!!!
+
+  let usersUrls = buildAccessibleUrlObject(users[req.cookies.user_id].user_id);
+  console.log('usersUrls', usersUrls);
   let templateVars = {
-    urls: urlDatabase,
+    urls: usersUrls,
+    //is this needed--userObject--
     userObject: users[req.cookies["user_id"]],
+    currentUser: users[req.cookies.user_id],
   }
   res.render("urls_index", templateVars);
 });
@@ -164,6 +171,18 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+function buildAccessibleUrlObject(userID) {
+
+  userUrlDatabase = {};
+  for (var urlID in urlDatabase) {
+    if (urlDatabase[urlID].owner === userID) {
+      userUrlDatabase[urlID] = urlDatabase[urlID].longURL;
+    }
+  }
+  return userUrlDatabase;
+}
 
 function containsEmail(email) {
   for (var user in users) {
@@ -203,3 +222,18 @@ const users = {
     password: "tangertanger"
   }
 }
+
+var urlDatabase = {
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    owner: "overunder"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    owner: "arosebyanyothername"
+  },
+  "1s32xK": {
+    longURL: "http://www.yahoo.com",
+    owner: "mrpick123"
+  }
+};
