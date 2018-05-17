@@ -23,6 +23,11 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+app.get("/registration", (req, res) => {
+ res.render("registration");
+});
+
+
 //EDIT url
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
@@ -136,3 +141,21 @@ function generateRandomString() {
   console.log(text);
   return text;
 };
+
+const users = { 
+  "Pickle": {
+    id: "mrpickl23", 
+    email: "mrpick123@gmail.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "Rose Vandermuskin": {
+    id: "arosebyanyothername", 
+    email: "rose.Vandermuskin@hotmail.com", 
+    password: "dishwasher-funk"
+  }
+  "Tanger Erotts": {
+    id: "overunder", 
+    email: "overunder@yahoo.com", 
+    password: "tangertanger"
+  }
+}
