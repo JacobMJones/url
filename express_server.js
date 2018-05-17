@@ -23,7 +23,6 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
 //EDIT url
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
@@ -39,7 +38,6 @@ app.post("/urls/:id", (req, res) => {
     res.redirect("/urls")
   }
 });
-
 
 app.post("/login", (req, res) => {
   var userName = req.body.username;
