@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>TinyApp</title>
+</head>
+<body>
+	<% if(!username){ %>
+   <form action="/login" method="POST">
+     
+      
+      <input id="login" type="text" name="username" placeholder="login" style="width: 300px">
+      
+      <input type="submit" value="Submit">
+  </form>
+ <% } else{ %>  
+   <h1><%= username %></h1>
+    <form method="GET" action="/logout%>/">    
+       <input type="submit" value="Log Out">
+       </form>
+<% } %>
+	 
+
+
+</body>
+
+</html>
+
+
+<style type="text/css">
+form{
+	 display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+</style>
