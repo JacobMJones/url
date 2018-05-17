@@ -24,7 +24,26 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/registration", (req, res) => {
- res.render("registration");
+  res.render("registration");
+});
+
+app.post("/registration", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+  let id = generateRandomString();
+  let username = req.body.username;
+  //console.log(`${email} ${password} ${id}`);
+
+  let user = {
+    id: id,
+    email: email,
+    password: password
+  }
+
+  users[username] = user;
+  console.log(users);
+  res.cookie(username, id);
+  res.redirect("/urls");
 });
 
 
@@ -89,8 +108,8 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-res.clearCookie("username");
-res.redirect('/urls');
+  res.clearCookie("username");
+  res.redirect('/urls');
 });
 app.get("/urls", (req, res) => {
   let templateVars = {
@@ -118,7 +137,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  var username = req.body.username;
+  let username = req.body.username;
 
   res.cookie("username", username);
   res.redirect("/urls");
@@ -142,20 +161,20 @@ function generateRandomString() {
   return text;
 };
 
-const users = { 
+const users = {
   "Pickle": {
-    id: "mrpickl23", 
-    email: "mrpick123@gmail.com", 
+    id: "mrpickl23",
+    email: "mrpick123@gmail.com",
     password: "purple-monkey-dinosaur"
   },
- "Rose Vandermuskin": {
-    id: "arosebyanyothername", 
-    email: "rose.Vandermuskin@hotmail.com", 
+  "Rose Vandermuskin": {
+    id: "arosebyanyothername",
+    email: "rose.Vandermuskin@hotmail.com",
     password: "dishwasher-funk"
-  }
+  },
   "Tanger Erotts": {
-    id: "overunder", 
-    email: "overunder@yahoo.com", 
+    id: "overunder",
+    email: "overunder@yahoo.com",
     password: "tangertanger"
   }
 }
