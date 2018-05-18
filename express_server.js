@@ -117,15 +117,25 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  let randomId = generateRandomString();
-  let htmlAddress = req.body.longURL;
-  let shortURL = req.body.shortURL;
-  console.log('in page', shortURL);
-  urlDatabase[randomId] = {
-    longURL: htmlAddress,
-    owner: req.session.user_id
-  };
 
+  let longURL = req.body.longURL;
+  let shortURL = req.body.shortURL;
+
+  console.log('post url**', 'long: ', longURL, 'short: ', shortURL);
+  console.log(urlDatabase);
+
+  if (urlDatabase[shortURL]) {
+    urlDatabase[shortURL] = {
+      longURL: longURL,
+      owner: req.session.user_id
+    }
+  } else {
+    let randomId = generateRandomString();
+    urlDatabase[randomId] = {
+      longURL: longURL,
+      owner: req.session.user_id
+    };
+  }
   res.redirect('/urls');
 
 });
