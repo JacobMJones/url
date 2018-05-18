@@ -2,17 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <% include ../views/partials/_header %>
   
   <!-- <title>TinyApp</title> -->
 </head>
 <body>
-  <p><%= currentUser.user_id %></p>
-
 <% if(Object.keys(urls).length == 0){ %>
    <h1>your object aint got nothing</h1>
  <% } else{ %>  
-   <h1>ohhhh your object has something</h1>
+  
    <div class="container">
       <table class="table">
         <thead>
@@ -35,11 +34,17 @@
               <input class ="btn" type="submit" value="Delete"/>
             </form>
             </td>
+
           </tr>
           <% } %>
         </tbody>
       </table>
     </div>
+   
+
+      <a href="/urls/new" class="btn">Add new address</a>
+            
+         
 <% } %>
     
 </body>

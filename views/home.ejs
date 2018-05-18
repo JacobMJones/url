@@ -1,25 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head></head>
+  <head>
+    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  </head>
   <body>
-   <p>Login</p>
-    <form action="/login" method="POST" style="margin:150px;">
+    <div style="margin:50px"></div>
+    <div>
+      <h1> Welcome To ShortURL!</h1>
+      <h4>Short URLs are not just our business, they are our <em>passion</em>.</h4>
+   
+    <form action="/login" method="POST" style="margin:30px;">
+      <h2>Login</h2>
        <label for="email">Email:</label>   
-      <input id="email" type="email" name="email" placeholder="" style="width: 300px">  
+      <input id="email" type="email" name="email" placeholder="" style="width: 175px">  
+
 	  <label for="password">Password:</label>    
-      <input id="password" type="password" name="password" placeholder="" style="width: 300px"> 
+      <input id="password" type="password" name="password" placeholder="" style="width: 175px"> 
       <input type="submit" value="Submit">
     </form>
+</div>
+<div>
 
-<p>Register</p>
-  <form action="/registration" method="POST" style="margin:150px;">
-     
+  <form action="/registration" method="POST" style="margin:20px;">
+     <h2>Register</h2>
        <label for="email">Email:</label>   
-      <input id="email" type="email" name="email" placeholder="" style="width: 300px">  
+      <input id="email" type="email" name="email" placeholder="" style="width: 175px">  
     <label for="registration">Password:</label>    
-      <input id="password" type="password" name="password" placeholder="" style="width: 300px"> 
+      <input id="password" type="password" name="password" placeholder="" style="width: 175px"> 
       <input type="submit" value="Submit">
     </form>
-
+</div>
   </body>
 </html>
+
+
+<style>
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+
+</style>

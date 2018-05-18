@@ -21,18 +21,24 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", (req, res) => {
+
   res.render("home");
 });
 
 app.get("/urls/new", (req, res) => {
-
+  if (!users[req.session.user_id]) {
+    res.redirect('/home')
+    return;
+  }
+  let usersUrls = buildAccessibleUrlObject(users[req.session.user_id].user_id);
   let templateVars = {
     urls: usersUrls,
     //is this needed--userObject--
-    userObject: users[req.cookies["user_id"]],
-    currentUser: users[req.cookies.user_id],
+    //userObject: users[req.cookies["user_id"]],
+    currentUser: users[req.session.user_id],
   }
   res.render("urls_new", templateVars);
+
 });
 
 app.get("/registration", (req, res) => {
@@ -46,9 +52,15 @@ app.post("/registration", (req, res) => {
 
   var emailInDatabase = containsEmail(email);
 
-  if (email === "" || password === "" || emailInDatabase) {
+  if (email === "") {
     res.status(400);
-    res.send('None shall pass');
+    res.send('Please include an email address');
+  } else if (password === "") {
+    res.status(400);
+    res.send('Please include a password');
+  } else if (emailInDatabase === "") {
+    res.status(400);
+    res.send('Email not registered');
   } else {
     let user = {
       user_id: user_id,
@@ -56,9 +68,12 @@ app.post("/registration", (req, res) => {
       password: bcrypt.hashSync(password, 10)
     }
     console.log(users);
-    res.cookie('user_id', user_id);
-    users[user_id] = user;
+  
 
+    users[user_id] = user;
+  
+    req.session.user_id = users[user_id].user_id;
+    res.redirect("/urls");
   }
   res.redirect("/urls");
 });
@@ -121,9 +136,6 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let shortURL = req.body.shortURL;
 
-  console.log('post url**', 'long: ', longURL, 'short: ', shortURL);
-  console.log(urlDatabase);
-
   if (urlDatabase[shortURL]) {
     urlDatabase[shortURL] = {
       longURL: longURL,
@@ -146,7 +158,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  //let longURL = urlDatabase['shortURL'].longURL;
+  let longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -160,6 +172,7 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+
 
   if (!users[req.session.user_id]) {
     res.redirect('/home')

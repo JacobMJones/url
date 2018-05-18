@@ -13,13 +13,9 @@
        <form method="GET" class="btn" action="/Registration/">    
        <input type="Submit" value="Register">
        </form>
-
-
  <% } else{ %>  
    
-   <h1><%= currentUser.email %></h1>
-    
-
+   <h1><%= currentUser.email %></h1> 
     <form method="GET" action="/logout%>/">    
        <input type="submit" value="Log Out">
        </form>
