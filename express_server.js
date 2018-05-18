@@ -1,15 +1,20 @@
 var express = require("express");
+var cookieSession = require('cookie-session');
 var app = express();
-var cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 var PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require("body-parser");
-app.use(cookieParser())
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ["carsanddogs"],
+}))
+
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
 app.set("view engine", "ejs");
-
-
 
 app.get("/", (req, res) => {
   res.end("Hello!");
@@ -18,6 +23,7 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
   res.render("home");
 });
+
 app.get("/urls/new", (req, res) => {
 
   let templateVars = {
@@ -47,8 +53,9 @@ app.post("/registration", (req, res) => {
     let user = {
       user_id: user_id,
       email: email,
-      password: password,
+      password: bcrypt.hashSync(password, 10)
     }
+    console.log(users);
     res.cookie('user_id', user_id);
     users[user_id] = user;
 
@@ -67,7 +74,6 @@ app.post("/urls/:id", (req, res) => {
     urlDatabase[id] = req.body.longURL;
     res.redirect("/urls")
   } else {
-
     res.redirect("/urls")
   }
 });
@@ -80,19 +86,18 @@ app.post("/login", (req, res) => {
     res.status(400);
     res.send('email or password string empty');
   }
-
-  console.log(users);
-  console.log(containsEmail(email));
-  //one function to check both parameters
+  //one function to check both parameters would be nice
   if (containsEmail(email)) {
     for (var userKey in users) {
       if (users[userKey].email === email) {
-        if (users[userKey].password === password) {
-          res.cookie('user_id', users[userKey].user_id);
+
+        if (bcrypt.compareSync(password, users[userKey].password)) {
+          req.session.user_id = users[userKey].user_id;
           res.redirect("/urls");
         } else {
           res.send(403, "stop hacking son!")
         }
+
       }
     }
   } else {
@@ -100,7 +105,7 @@ app.post("/login", (req, res) => {
     res.send('email or password not listed, maybe register?');
   }
 });
-
+//extract the password then compare
 app.post("/urls/:id/delete", (req, res) => {
   const idToDelete = req.params.id;
   const urlToDelete = urlDatabase[idToDelete];
@@ -112,19 +117,15 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-
-
   let randomId = generateRandomString();
   let htmlAddress = req.body.longURL;
-console.log('is this the html address?', htmlAddress);
- 
-    //make object here
-  console.log('is this the owner?', req.cookies.user_id);
+  let shortURL = req.body.shortURL;
+  console.log('in page', shortURL);
   urlDatabase[randomId] = {
     longURL: htmlAddress,
-    owner: req.cookies.user_id
+    owner: req.session.user_id
   };
-  console.log('new url database', urlDatabase);
+
   res.redirect('/urls');
 
 });
@@ -135,9 +136,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL].longURL;
-  console.log('should be full address', longURL);
-  
+  //let longURL = urlDatabase['shortURL'].longURL;
   res.redirect(longURL);
 });
 
@@ -146,39 +145,45 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect('/urls');
 });
+
 app.get("/urls", (req, res) => {
 
-  if (!users[req.cookies.user_id]) {
+  if (!users[req.session.user_id]) {
     res.redirect('/home')
-
+    return;
   }
 
-  //BUILD POSSIBLE URLS OBJECT FIRST!!!!!
-
-  let usersUrls = buildAccessibleUrlObject(users[req.cookies.user_id].user_id);
-  console.log('usersUrls', usersUrls);
+  let usersUrls = buildAccessibleUrlObject(users[req.session.user_id].user_id);
   let templateVars = {
     urls: usersUrls,
-    //is this needed--userObject--
-    userObject: users[req.cookies["user_id"]],
-    currentUser: users[req.cookies.user_id],
+    currentUser: users[req.session.user_id],
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id],
+
   }
   if (Object.keys(usersUrls).length > 0) {
     res.render("urls_index", templateVars);
   } else {
+
     res.render("urls_new", templateVars);
   }
 });
 
-// the : denotes a variable will follow
+
 app.get("/urls/:id", (req, res) => {
+
+
+  let shortURL = req.params.id;
+  let longURL = urlDatabase[shortURL].longURL;
+
   let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user_id: req.cookies["user_id"]
+    shortURL: shortURL,
+    longURL: longURL,
+    user_id: req.session["user_id"],
+    currentUser: users[req.session.user_id]
   };
 
   res.render("urls_show", templateVars);
@@ -227,34 +232,9 @@ function generateRandomString() {
 };
 
 const users = {
-  "mrpickl23": {
-    user_id: "mrpickl23",
-    email: "mrpick123@gmail.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "arosebyanyothername": {
-    user_id: "arosebyanyothername",
-    email: "rose.Vandermuskin@hotmail.com",
-    password: "dishwasher-funk"
-  },
-  "overunder": {
-    user_id: "overunder",
-    email: "overunder@yahoo.com",
-    password: "tangertanger"
-  }
+
 }
 
 var urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    owner: "overunder"
-  },
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    owner: "arosebyanyothername"
-  },
-  "1s32xK": {
-    longURL: "http://www.yahoo.com",
-    owner: "mrpick123"
-  }
+
 };
