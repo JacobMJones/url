@@ -19,7 +19,14 @@ app.get("/home", (req, res) => {
   res.render("home");
 });
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+
+  let templateVars = {
+    urls: usersUrls,
+    //is this needed--userObject--
+    userObject: users[req.cookies["user_id"]],
+    currentUser: users[req.cookies.user_id],
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/registration", (req, res) => {
@@ -109,8 +116,16 @@ app.post("/urls", (req, res) => {
 
   let randomId = generateRandomString();
   let htmlAddress = req.body.longURL;
-  urlDatabase[randomId] = htmlAddress;
-  res.redirect(`urls/${randomId}`);
+console.log('is this the html address?', htmlAddress);
+ 
+    //make object here
+  console.log('is this the owner?', req.cookies.user_id);
+  urlDatabase[randomId] = {
+    longURL: htmlAddress,
+    owner: req.cookies.user_id
+  };
+  console.log('new url database', urlDatabase);
+  res.redirect('/urls');
 
 });
 
@@ -120,7 +135,9 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
+  let longURL = urlDatabase[shortURL].longURL;
+  console.log('should be full address', longURL);
+  
   res.redirect(longURL);
 });
 
@@ -149,7 +166,11 @@ app.get("/urls", (req, res) => {
     userObject: users[req.cookies["user_id"]],
     currentUser: users[req.cookies.user_id],
   }
-  res.render("urls_index", templateVars);
+  if (Object.keys(usersUrls).length > 0) {
+    res.render("urls_index", templateVars);
+  } else {
+    res.render("urls_new", templateVars);
+  }
 });
 
 // the : denotes a variable will follow

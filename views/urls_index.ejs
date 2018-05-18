@@ -8,7 +8,12 @@
 </head>
 <body>
   <p><%= currentUser.user_id %></p>
-    <div class="container">
+
+<% if(Object.keys(urls).length == 0){ %>
+   <h1>your object aint got nothing</h1>
+ <% } else{ %>  
+   <h1>ohhhh your object has something</h1>
+   <div class="container">
       <table class="table">
         <thead>
           <tr>
@@ -35,6 +40,8 @@
         </tbody>
       </table>
     </div>
+<% } %>
+    
 </body>
 </html>
 
