@@ -68,12 +68,12 @@ app.post("/registration", (req, res) => {
       password: bcrypt.hashSync(password, 10)
     }
     console.log(users);
-  
+
 
     users[user_id] = user;
-  
+
     req.session.user_id = users[user_id].user_id;
-   
+
   }
   res.redirect("/urls");
 });
@@ -197,19 +197,25 @@ app.get("/urls", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
+console.log("***req", req.params.id);
+console.log("*****in database", urlDatabase[req.params.id]);
+  if (!urlDatabase[req.params.id]) {
+    res.redirect('/home');
+    return;
+  } else {
+    let shortURL = req.params.id;
+    let longURL = urlDatabase[shortURL].longURL;
 
+    let templateVars = {
+      shortURL: shortURL,
+      longURL: longURL,
+      user_id: req.session["user_id"],
+      currentUser: users[req.session.user_id]
+    };
 
-  let shortURL = req.params.id;
-  let longURL = urlDatabase[shortURL].longURL;
+    res.render("urls_show", templateVars);
+  }
 
-  let templateVars = {
-    shortURL: shortURL,
-    longURL: longURL,
-    user_id: req.session["user_id"],
-    currentUser: users[req.session.user_id]
-  };
-
-  res.render("urls_show", templateVars);
 });
 
 
