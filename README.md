@@ -3,8 +3,8 @@
 This is a skeleton for a url shortening website. It implements a user system and allows non users to use the shortened urls 
 within the site's database. 
 
-!["Screenshot of home page"](https://github.com/JacobMJones/url/blob/master/docs/welcomescreen.png)]
-!["Screenshot of home page"](https://github.com/JacobMJones/url/blob/master/docs/listings.png)]
+!["Screenshot of home page"](https://github.com/JacobMJones/url/blob/master/docs/welcomescreen.png)
+!["Screenshot of home page"](https://github.com/JacobMJones/url/blob/master/docs/listings.png)
 ## Bugs/Issues
 
 If a user has many websites listed, the page does not scale down to fit the listings or add a next page feature.
