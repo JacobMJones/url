@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", (req, res) => {
-
   res.render("home");
 });
 
@@ -33,29 +32,16 @@ app.get("/urls/new", (req, res) => {
   let usersUrls = buildAccessibleUrlObject(users[req.session.user_id].user_id);
   let templateVars = {
     urls: usersUrls,
-    //is this needed--userObject--
-    //userObject: users[req.cookies["user_id"]],
     currentUser: users[req.session.user_id],
   }
   res.render("urls_new", templateVars);
-
 });
-
-// app.get("/registration", (req, res) => {
-//   if (req.user) {
-//    res.render("urls");
-// } else {
-//    res.render("home");
-// }
-//   //res.render("registration");
-// });
 
 app.post("/registration", (req, res) => {
 
   let email = req.body.email;
   let password = req.body.password;
   let user_id = generateRandomString();
-
   var emailInDatabase = containsEmail(email);
 
   if (email === "") {
@@ -73,25 +59,18 @@ app.post("/registration", (req, res) => {
       email: email,
       password: bcrypt.hashSync(password, 10)
     }
-    console.log(users);
-
 
     users[user_id] = user;
-
     req.session.user_id = users[user_id].user_id;
-
   }
   res.redirect("/urls");
 });
 
-//EDIT url
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const url = urlDatabase[id];
 
-
   if (url) {
-
     urlDatabase[id] = req.body.longURL;
     res.redirect("/urls")
   } else {
@@ -111,14 +90,12 @@ app.post("/login", (req, res) => {
   if (containsEmail(email)) {
     for (var userKey in users) {
       if (users[userKey].email === email) {
-
         if (bcrypt.compareSync(password, users[userKey].password)) {
           req.session.user_id = users[userKey].user_id;
           res.redirect("/urls");
         } else {
           res.send(403, "stop hacking son!")
         }
-
       }
     }
   } else {
@@ -126,7 +103,7 @@ app.post("/login", (req, res) => {
     res.send('email or password not listed, maybe register?');
   }
 });
-//extract the password then compare
+
 app.post("/urls/:id/delete", (req, res) => {
   const idToDelete = req.params.id;
   const urlToDelete = urlDatabase[idToDelete];
@@ -179,7 +156,6 @@ app.get("/logout", (req, res) => {
 
 app.get("/urls", (req, res) => {
 
-
   if (!users[req.session.user_id]) {
     res.redirect('/home')
     return;
@@ -191,20 +167,17 @@ app.get("/urls", (req, res) => {
     currentUser: users[req.session.user_id],
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-
   }
   if (Object.keys(usersUrls).length > 0) {
     res.render("urls_index", templateVars);
   } else {
-
     res.render("urls_new", templateVars);
   }
 });
 
 
 app.get("/urls/:id", (req, res) => {
-console.log("***req", req.params.id);
-console.log("*****in database", urlDatabase[req.params.id]);
+
   if (!urlDatabase[req.params.id]) {
     res.redirect('/home');
     return;
@@ -218,19 +191,12 @@ console.log("*****in database", urlDatabase[req.params.id]);
       user_id: req.session["user_id"],
       currentUser: users[req.session.user_id]
     };
-
     res.render("urls_show", templateVars);
   }
-
-});
-
-
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+
 });
 
 

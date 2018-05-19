@@ -7,6 +7,7 @@
 
   <body style="font-size:20px; padding:5px;">
     <% include partials/_header %>
+    <div style="height: 35px"></div>
      <h2 style="text-align: center"> Enter a new address</h2>
     <form style="text-align: center" action="/urls/" method="POST" style="margin:50px;">
       <label for="longURL">Enter a URL:</label>
@@ -43,4 +44,10 @@
 
 a {
     color: #2444C9;
+}
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
 }
