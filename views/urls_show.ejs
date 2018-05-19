@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <% include ../views/partials/_header %>
 
   <title>TinyApp</title>
 </head>
 <body>
 	<h1> Edit your short URL </h1>
-     <p><%= shortURL %> <%= longURL %></p>
+ 
 
       <form action="/urls/" method="POST">
     
@@ -18,3 +19,32 @@
       <input type="submit" value="Submit">
 </body>
 </html>
+
+
+
+<style type="text/css">
+ .btn {
+  -webkit-border-radius: 22;
+  -moz-border-radius: 22;
+  border-radius: 22px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  background: #4abdac;
+  padding: 8px 16px 8px 16px;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background:   #f7b733;
+  text-decoration: none;
+}
+
+.text{
+  font-size: 1.5em; 
+  text-align: center;
+}
+
+a {
+    color: #2444C9;
+}

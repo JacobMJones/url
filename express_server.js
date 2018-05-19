@@ -73,7 +73,7 @@ app.post("/registration", (req, res) => {
     users[user_id] = user;
   
     req.session.user_id = users[user_id].user_id;
-    res.redirect("/urls");
+   
   }
   res.redirect("/urls");
 });
