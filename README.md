@@ -1,8 +1,7 @@
 # Url Shortening Website
 
 This is a skeleton for a url shortening website. It implements a user system and allows non users to use the shortened urls 
-within the sites database. 
-ons;
+within the site's database. 
 
 ## Bugs/Issues
 
