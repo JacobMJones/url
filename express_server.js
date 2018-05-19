@@ -41,11 +41,17 @@ app.get("/urls/new", (req, res) => {
 
 });
 
-app.get("/registration", (req, res) => {
-  res.render("registration");
-});
+// app.get("/registration", (req, res) => {
+//   if (req.user) {
+//    res.render("urls");
+// } else {
+//    res.render("home");
+// }
+//   //res.render("registration");
+// });
 
 app.post("/registration", (req, res) => {
+
   let email = req.body.email;
   let password = req.body.password;
   let user_id = generateRandomString();
