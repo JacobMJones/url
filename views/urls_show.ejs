@@ -14,8 +14,8 @@
 
       <form action="/urls/" method="POST">
     
-      <input for="changeURL" name="shortURL" value=<%=shortURL%> Change <%=shortURL %> to:</label>
-      
+      <label for="changeURL"> <%=shortURL%> </label>
+      <input type="hidden" name="shortURL" value=<%=shortURL%> />
       <input id="changeURL" type="text" name="longURL" placeholder=<%=longURL%> style="width: 300px">
 
       <input type="submit"  value="Submit">
