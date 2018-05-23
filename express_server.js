@@ -197,7 +197,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.listen(PORT, () => {
-
+console.log('Server Running');
 });
 
 
