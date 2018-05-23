@@ -43,6 +43,7 @@ app.post("/registration", (req, res) => {
   let password = req.body.password;
   let user_id = generateRandomString();
   var emailInDatabase = containsEmail(email);
+console.log("**** ")
 
   if (email === "") {
     res.status(400);
@@ -50,9 +51,9 @@ app.post("/registration", (req, res) => {
   } else if (password === "") {
     res.status(400);
     res.send('Please include a password');
-  } else if (emailInDatabase === "") {
+  } else if (emailInDatabase ===  true) {
     res.status(400);
-    res.send('Email not registered');
+    res.send('Email already registered');
   } else {
     let user = {
       user_id: user_id,
